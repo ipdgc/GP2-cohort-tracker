@@ -1,0 +1,5 @@
+Date,Study,FullName,Institution,Group,City,Country,Total_number,Is this a multi-site study?,Who are the participants?,Study Type,cases,controls,Total,Europeans (%),Africans (%),Asians (%),Chip,Other Data
+01/02/21,A,aa,x,Complex,Houston,USA,1000,Yes,PD cases and controls,Longitudinal (prospective): multiple face-to-face assessments,400,600,1000,,,,NeuroChip,
+01/03/21,B,bb,y,Complex,Podolsk,Russia,200,Yes,PD cases and controls,,100,100,200,,,,,
+01/05/21,C,cc,z,Monogenic,Oslo,Norway,15000,Yes,PD cases ,,6000,9000,15000,,,,,
+01/05/21,D,dd,xx,Monogenic,Tuebingen,Germany,1800,No,PD cases and controls,,800,1000,1800,,,,,
