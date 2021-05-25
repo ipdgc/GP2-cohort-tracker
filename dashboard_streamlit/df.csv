@@ -1,4 +1,5 @@
-Date,Study,Study,Institution,Group,City,Country,Total number of study participants,Is this a multi-site study?,Who are the participants?,Study Type,cases,controls,Total,Europeans (%),Africans (%),Asians (%),Chip,Other Data
-01/02/2021,BCM-UMD,Baylor College of Medicine - University of Maryland,Baylor College of Medicine,Complex,"Houston,TX",USA,1300,Yes,PD cases and controls,Longitudinal (prospective): multiple face-to-face assessments,932,318,1250,90,3,1,NeuroChip,
-01/03/2021,CORIELL,Coriell database,N/A,Complex,"Camden, NJ",USA,,Yes,PD cases and controls,"Cross-sectional: one assessment only, with no further contact",4478,4111,8589,90,5,5,"NeuroX, NeuroChip","LCL (Lymphoblastoid cell lines), iPS"
-01/05/2021,PDGENEration,PD GENEration,Parkinson's Foundation,Complex,"Miami, FL ",USA,15000,Yes,PD only,"Cross-sectional plus: one assessment with further questionnaires, EPR, Mortality follow-up",400,0,400,98,1,1,,
+Date,Study,FullName,Institution,Group,City,Country,Total_number,Is this a multi-site study?,Who are the participants?,Study Type,cases,controls,Total,Europeans (%),Africans (%),Asians (%),Chip,Other Data
+01/02/21,A,aa,x,Complex,Houston,USA,1000,Yes,PD cases and controls,Longitudinal (prospective): multiple face-to-face assessments,400,600,1000,,,,NeuroChip,
+01/03/21,B,bb,y,Complex,Podolsk,Russia,200,Yes,PD cases and controls,,100,100,200,,,,,
+01/05/21,C,cc,z,Monogenic,Oslo,Norway,15000,Yes,PD cases ,,6000,9000,15000,,,,,
+01/05/21,D,dd,xx,Monogenic,Tuebingen,Germany,1800,No,PD cases and controls,,800,1000,1800,,,,,
