@@ -15,12 +15,11 @@ st.set_page_config(
 )
 
 
-df=pd.read_csv('Hackathon_cleaned_data.csv')
-df['Total number of study participants'].fillna(df.Total, inplace=True)
-df['Date'] = pd.to_datetime(df['Date'])
-df_count_country = df.groupby('Country')['Study'].count()
-countries = df['Country'].unique()
-df_count_group = df.groupby('Group')['Study'].count()
+df=pd.read_csv('Data Curation - OCT 2021 - CLEANED_DATA.csv')
+df['Current_Total'].fillna(df.Current_Total, inplace=True)
+df_count_country = df.groupby('Main_Site')['Short_Name'].count()
+df['Timestamp'] = pd.to_datetime(df['Timestamp'],format='%m/%d/%Y', errors='ignore')
+countries = df['Main_Site'].unique()
 
 ####################### HEAD ##############################################
 
@@ -42,34 +41,33 @@ with title:
 
 with head_3:
     st.markdown("TOTAL SAMPLES")
-    total_n = df['Total number of study participants'].sum()   
+    total_n = df['Current_Total'].sum()   
     st.markdown(total_n)
 with head_4:
     st.markdown("LAST UPDATED")
-    most_recent_date = df['Date'].max()   
-    st.markdown(most_recent_date)
+    st.markdown("October 2021")
 
 
 ########################  SIDE BAR #########################################
 
-st.sidebar.markdown('<p class="big-font">Find your cohort</p>', unsafe_allow_html=True)
+st.sidebar.markdown('**Find your cohort**', unsafe_allow_html=True)
 countries_selected = st.sidebar.multiselect('Countries', countries)
 
 if len(countries_selected) > 0:
 
-    df_cf = df.loc[df['Country'].isin(countries_selected)]
+    df_cf = df.loc[df['Main_Site'].isin(countries_selected)]
 else:
     df_cf = df
 
 
-slider_1, slider_2 = st.sidebar.slider('Cohort size',int(df_cf['Total number of study participants'].min()),int(df_cf['Total number of study participants'].max()+1),[int(df_cf['Total number of study participants'].min()),int(df_cf['Total number of study participants'].max()+1)],10)
+slider_1, slider_2 = st.sidebar.slider('Cohort size',int(df_cf['Current_Total'].min()),int(df_cf['Current_Total'].max()+1),[int(df_cf['Current_Total'].min()),int(df_cf['Current_Total'].max()+1)],10)
 
         
-df_csf = df_cf[df_cf['Total number of study participants'].between(slider_1, slider_2)].reset_index(drop=True)
+df_csf = df_cf[df_cf['Current_Total'].between(slider_1, slider_2)].reset_index(drop=True)
 
 
-cohort_selection = st.sidebar.selectbox('Cohort selection',df_csf['Study'].unique())
-df_selected = df_csf.loc[df_csf['Study'] == cohort_selection]
+cohort_selection = st.sidebar.selectbox('Cohort selection',df_csf['Short_Name'].unique())
+df_selected = df_csf.loc[df_csf['Short_Name'] == cohort_selection]
 df_selected = df_selected.reset_index()
 
 
@@ -85,59 +83,76 @@ if WORLD:
 EUR = europe.button('EUROPE')
 if EUR:
     with europe:
-       df_map = df.loc[df['map_filter'] == 'Europe']
+       df_map = df.loc[df['Continent'] == 'Europe']
 
-ASIA = asia.button('ASIA')
+ASIA = asia.button('ASIA/OCEANIA')
 if ASIA:
     with asia:
-       df_map = df.loc[df['map_filter'] == 'Asia']
+       df_map = df.loc[df['Continent'] == 'Asia/Oceania']
 
 NAM = na.button('NORTH AMERICA')
 if NAM:
     with na:
-       df_map = df.loc[df['map_filter'] == 'North America']
+       df_map = df.loc[df['Continent'] == 'North America']
 
 SAM = sa.button('SOUTH AMERICA')
 if SAM:
     with sa:
-       df_map = df.loc[df['map_filter'] == 'South America']
+       df_map = df.loc[df['Continent'] == 'South America']
 
-AUST = aust.button('AUSTRALIA')
-if AUST:
-    with aust:
-       df_map = df.loc[df['map_filter'] == 'Australia']
 
 ########################  2nd row   #########################################
 left_column, right_column = st.beta_columns([2.5,1])
 with right_column:
-    st.markdown(df_selected['Study'][0])
-    cases=df_selected['PD Cases']
-    controls=df_selected['Controls']
-    d=pd.concat([cases, controls], axis = 1).T
+    df_selected_update = df_selected[['Proposed_Samples_by2022', 'Processed_Samples']]
+    st.markdown(df_selected['Short_Name'][0])
+    st.table(df_selected_update.assign(hack='').set_index('hack'))
+    ppd=df_selected['Current_PD']
+    nonpd=df_selected['Current_nonPD']
+    d=pd.concat([ppd, nonpd], axis = 1).T
     d.columns = ['cohort']
-    fig = px.pie(d, values=d['cohort'], names = d.index, title = "Cases/Controls")
+    fig = px.pie(d, values=d['cohort'], names = d.index, title = "PD/nonPD")
     fig.update_layout(showlegend=False,
 		width=300,
 		height=300)
     st.write(fig)
     st.markdown("**Study Name**")
-    st.write(df_selected['Full Name of Study'][0])
+    st.write(df_selected['Full_Name'][0])
     st.markdown("**Main Study Site**")
-    st.write(df_selected['City'][0])
+    st.write(df_selected['City/State'][0])
+    st.markdown("**Cohort completion year**")
+    st.write(df_selected['Cohort_completion_Year'][0])
+    st.markdown("**Is cohort multisite?**")
+    st.write(df_selected['Multisite_Study'][0])
     st.markdown("**Patient Type**")
-    st.write(df_selected['Who are the participants?'][0])
-    st.markdown("**Additional Information**")
-    st.write(df_selected['Study Type'][0])
+    st.write(df_selected['Participant_type'][0])
+    st.markdown("**Study type**")
+    st.write(df_selected['Study_type'][0])
    
 with left_column:
-    cho_map = px.choropleth(df_map, locations = "Country",
-                    color = np.log10(df_map['Total number of study participants']), 
-                    hover_name = "Country", 
-                    hover_data = ["Total number of study participants", 'Study'],
-                    color_continuous_scale = px.colors.sequential.Plasma, locationmode = "country names")
-    cho_map.update_layout(title_text = "GP2 Cohort Participant Numbers Choropleth Map",
-		width=1100,
-		height=770)
-    cho_map.update_coloraxes(colorbar_title = "Log10 Participant Numbers",colorscale = "deep", reversescale=False)
-    st.write(cho_map)
-    st.slider('Timeline', datetime.date(2021,1,1))
+    df_map['cohort_number'] = df_map.groupby('Main_Site')['Short_Name'].transform('size')
+    geo_map = px.scatter_geo(df_map, locations="Main_Site", color=np.log10(df_map['Current_Total']),
+                     hover_name="Main_Site", size = 'cohort_number',
+                     projection="natural earth", color_continuous_scale = px.colors.sequential.Plasma, 
+                     locationmode = "country names")
+    geo_map.update_layout(title_text = "GP2 Cohort Participant Numbers Geo Scatter Map",
+		width=1000,
+		height=700)
+    geo_map.update_coloraxes(colorbar_title = "Log10 Pat#",colorscale = "deep", reversescale=False)
+    st.write(geo_map)
+
+
+
+
+#with left_column:
+#    cho_map = px.choropleth(df_map, locations = "Main_Site",
+#                    color = np.log10(df_map['Current_Total']), 
+#                    hover_name = "Main_Site", 
+#                    hover_data = ["Current_Total", 'Short_Name'],
+#                    color_continuous_scale = px.colors.sequential.Plasma, locationmode = "country names")
+#    cho_map.update_layout(title_text = "GP2 Cohort Participant Numbers Choropleth Map",
+#		width=1000,
+#		height=700)
+#    cho_map.update_coloraxes(colorbar_title = "Log10 Pat#",colorscale = "deep", reversescale=False)
+#    st.write(cho_map)
+
